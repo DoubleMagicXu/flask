@@ -34,7 +34,7 @@ def user(name):#视图函数
 ~~~~
 ### 启动服务器
 ~~~python
-if __name__=="__main__"#确保直接执行脚本才启动web服务器
+if __name__=="__main__":#确保直接执行脚本才启动web服务器
     app.run(debug=True)
 ~~~
 ### Flask 扩展
@@ -45,7 +45,66 @@ pip install flask-script
 from flask_script import Manager
 manager=Manager(app)
 #...
-if__name__=="__main__"
+if__name__=="__main__":
     manager.run()
 ~~~~
+## 模板
+视图函数的功能：
+    业务逻辑
+    表现逻辑
+把表现逻辑移到模板中可提升程序可维护性。
+模板渲染：用真实值替换变量，返回最终响应字符串。
+### Jinja2模板引擎
+~~~~html
+<!--templates/user.html-->
+<h1>Hello,{{name}}</h1> 
+~~~~
+~~~~python
+#encoding=utf-8
+from flask import Flask
+from flask_script import Manager
+from flask import render_template
+app=Flask(__name__)
+manager=Manager(app)
+@app.route("/user/<name>")
+def user(name):
+    return(render_template("user.html",name=name))#左边的name代表模板中占位符,右边的name代表当前作用域的变量。
+if __name__=="__main__":
+    manager.run()
+~~~~
+Jinjia2模板继承
+~~~~html
+<!--templates/base.html-->
+<html>
+<head>
+	{%block head%}
+	<title>
+		{% block title%}
+		{%endblock%}
+		- My Application
+	</title>
+	{%endblock%}
+</head>
+<body>
+	{%block body%}
+	{%endblock%}
+</body>
+</html>
+~~~~
+~~~~html
+<!--templates/user.html>
+{% extends "base.html" %}
+{% block title %} Index{% endblock %}
+{%block head%}
+{{super()}}
+<style></style>
+{%endblock%}
+{%block body%}
+<h1> Hello, {{name}}</h1>
+{%endblock%}
+~~~~
+
+
+
+
 
